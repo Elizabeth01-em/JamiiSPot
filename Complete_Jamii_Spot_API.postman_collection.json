@@ -1,0 +1,2309 @@
+{
+  "info": {
+    "name": "Jamii Spot - Complete API Testing Collection",
+    "description": "🌍 **Complete API Testing for Jamii Spot Backend**\n\nThis collection tests ALL features of the Jamii Spot travel discovery platform:\n\n## 🎯 **Core Vision**\nConnecting people from the same home country when they visit another country\n\n## 📋 **Features Covered**\n✅ User Authentication & JWT\n✅ Profile Management & Travel Status\n✅ Friend Request System\n✅ Community Management\n✅ Story Posts (24-hour expiring media)\n✅ Real-time Messaging with E2E Encryption\n✅ Travel Discovery & Matching\n✅ Local Expert Finding\n✅ Emergency Network\n✅ WebSocket Notifications\n✅ Advanced Compatibility Scoring\n\n## 🚀 **Quick Start**\n1. Start Django server: `python manage.py runserver`\n2. Import this collection\n3. Run requests in order: Auth → Profiles → Discovery → Messaging\n4. Monitor WebSocket connections for real-time features\n\n## 🔑 **Environment Variables**\nThis collection automatically manages JWT tokens for multiple test users",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "john_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "mary_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "david_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "john_user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "mary_user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "david_user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "conversation_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "community_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔧 Environment Setup",
+      "description": "Initial setup and server health checks",
+      "item": [
+        {
+          "name": "Health Check - Server Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Server is running', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/",
+              "host": ["{{base_url}}"],
+              "path": ["admin", ""]
+            },
+            "description": "Verify Django server is running and accessible"
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Authentication & User Management",
+      "description": "User registration, login, and JWT token management",
+      "item": [
+        {
+          "name": "Register John (Kenyan Traveler)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('User registered successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('username', 'john_traveler');",
+                  "    pm.collectionVariables.set('john_user_id', response.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john_traveler\",\n  \"email\": \"john@example.com\",\n  \"password\": \"securepass123\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Kimani\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Register Mary (Local Expert)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Local expert registered', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('mary_user_id', response.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"mary_expert\",\n  \"email\": \"mary@example.com\",\n  \"password\": \"securepass123\",\n  \"first_name\": \"Mary\",\n  \"last_name\": \"Wanjiku\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Register David (Travel Buddy)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Travel buddy registered', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('david_user_id', response.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"david_visitor\",\n  \"email\": \"david@example.com\",\n  \"password\": \"securepass123\",\n  \"first_name\": \"David\",\n  \"last_name\": \"Otieno\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Login John - Get JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('JWT token received for John', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('access');",
+                  "    pm.collectionVariables.set('john_token', response.access);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"john_traveler\",\n  \"password\": \"securepass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Login Mary - Get JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('JWT token received for Mary', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('mary_token', response.access);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"mary_expert\",\n  \"password\": \"securepass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Login David - Get JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('JWT token received for David', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('david_token', response.access);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"david_visitor\",\n  \"password\": \"securepass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{john_refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/refresh/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "token", "refresh", ""]
+            },
+            "description": "Test JWT token refresh functionality"
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Profile Management",
+      "description": "User profile creation, updates, and travel data management",
+      "item": [
+        {
+          "name": "Get All Profiles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Profiles retrieved successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/profiles/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", ""]
+            }
+          }
+        },
+        {
+          "name": "Setup John's Profile (Traveler)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Profile updated successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('travel_status', 'traveling');",
+                  "    pm.expect(response).to.have.property('home_country', 'Kenya');",
+                  "    pm.expect(response).to.have.property('is_traveling', true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Software developer from Nairobi, exploring London for the first time!\",\n  \"home_country\": \"Kenya\",\n  \"home_city\": \"Nairobi\",\n  \"current_country\": \"United Kingdom\",\n  \"current_city\": \"London\",\n  \"travel_status\": \"traveling\",\n  \"travel_start_date\": \"2025-01-10\",\n  \"travel_end_date\": \"2025-02-10\",\n  \"is_available_to_help\": true,\n  \"languages_spoken\": [\"English\", \"Swahili\", \"Kikuyu\"],\n  \"years_in_current_location\": null,\n  \"is_local_expert\": false,\n  \"expertise_areas\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{john_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{john_user_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Setup Mary's Profile (Local Expert)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Local expert profile created', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('is_local_expert', true);",
+                  "    pm.expect(response).to.have.property('travel_status', 'expat');",
+                  "    pm.expect(response.expertise_areas).to.include('transportation');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Kenyan living in London for 3 years. Happy to help fellow Kenyans!\",\n  \"home_country\": \"Kenya\",\n  \"home_city\": \"Mombasa\",\n  \"current_country\": \"United Kingdom\",\n  \"current_city\": \"London\",\n  \"travel_status\": \"expat\",\n  \"travel_start_date\": null,\n  \"travel_end_date\": null,\n  \"is_available_to_help\": true,\n  \"languages_spoken\": [\"English\", \"Swahili\", \"Arabic\"],\n  \"years_in_current_location\": 3,\n  \"is_local_expert\": true,\n  \"expertise_areas\": [\"transportation\", \"food\", \"accommodation\", \"culture\", \"shopping\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{mary_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{mary_user_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Setup David's Profile (Travel Buddy)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Travel buddy profile created', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('travel_status', 'traveling');",
+                  "    pm.expect(response).to.have.property('is_traveling', true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{david_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"University student visiting London during winter break\",\n  \"home_country\": \"Kenya\",\n  \"home_city\": \"Kisumu\",\n  \"current_country\": \"United Kingdom\",\n  \"current_city\": \"London\",\n  \"travel_status\": \"traveling\",\n  \"travel_start_date\": \"2025-01-05\",\n  \"travel_end_date\": \"2025-01-25\",\n  \"is_available_to_help\": true,\n  \"languages_spoken\": [\"English\", \"Swahili\", \"Luo\"],\n  \"years_in_current_location\": null,\n  \"is_local_expert\": false,\n  \"expertise_areas\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{david_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{david_user_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Specific Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{mary_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{mary_user_id}}", ""]
+            },
+            "description": "View another user's profile"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤝 Friend Request System",
+      "description": "Send, accept, and manage friend requests with real-time notifications",
+      "item": [
+        {
+          "name": "John Sends Friend Request to Mary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Friend request sent successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('status', 'pending');",
+                  "    pm.expect(response).to.have.property('to_user', parseInt(pm.collectionVariables.get('mary_user_id')));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to_user\": {{mary_user_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/friend-requests/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "friend-requests", ""]
+            },
+            "description": "🔔 Triggers real-time notification to Mary"
+          }
+        },
+        {
+          "name": "Get Mary's Friend Requests",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Friend requests retrieved', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an('array');",
+                  "    if (response.length > 0) {",
+                  "        pm.collectionVariables.set('friend_request_id', response[0].id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/friend-requests/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "friend-requests", ""]
+            }
+          }
+        },
+        {
+          "name": "Mary Accepts Friend Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Friend request accepted', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('status', 'Friend request accepted.');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/friend-requests/{{friend_request_id}}/accept/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "friend-requests", "{{friend_request_id}}", "accept", ""]
+            },
+            "description": "🔔 Triggers acceptance notification to John"
+          }
+        },
+        {
+          "name": "David Sends Friend Request to John",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{david_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to_user\": {{john_user_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/friend-requests/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "friend-requests", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏘️ Community Management",
+      "description": "Create and manage communities with chat functionality",
+      "item": [
+        {
+          "name": "Create Kenyan Community in London",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Community created successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('name', 'Kenyans in London');",
+                  "    pm.collectionVariables.set('community_id', response.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kenyans in London\",\n  \"description\": \"A community for Kenyans living in or visiting London. Share experiences, ask for help, and connect with fellow countrymates!\",\n  \"is_channel\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/communities/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "communities", ""]
+            },
+            "description": "Mary creates a community for Kenyans in London"
+          }
+        },
+        {
+          "name": "Get All Communities",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Communities retrieved', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/communities/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "communities", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Specific Community",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/communities/{{community_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "communities", "{{community_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📱 Story Posts",
+      "description": "24-hour expiring story posts with media processing",
+      "item": [
+        {
+          "name": "Get All Stories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Stories retrieved successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/stories/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "stories", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Story Post (Text Simulation)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Story created successfully', function () {",
+                  "    pm.response.to.have.status(202);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.collectionVariables.set('story_id', response.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "media_type",
+                  "value": "image",
+                  "type": "text"
+                },
+                {
+                  "key": "media_file",
+                  "type": "file",
+                  "src": "/path/to/test/image.jpg",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/stories/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "stories", ""]
+            },
+            "description": "🔔 Triggers processing notification + friend notifications\n\nNote: For file upload testing, enable the media_file field and provide a test image"
+          }
+        },
+        {
+          "name": "Get Specific Story",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/stories/{{story_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "stories", "{{story_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔐 Encryption & Security",
+      "description": "End-to-end encryption key management",
+      "item": [
+        {
+          "name": "Generate Encryption Keys for John",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Encryption keys generated', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('public_key');",
+                  "    pm.expect(response).to.have.property('private_key');",
+                  "    pm.expect(response.message).to.include('Save the private key securely');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/encryption-keys/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "encryption-keys", ""]
+            },
+            "description": "Generate RSA key pair for E2E encryption"
+          }
+        },
+        {
+          "name": "Generate Encryption Keys for Mary",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/encryption-keys/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "encryption-keys", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Public Keys",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Public keys retrieved', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/public-keys/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "public-keys", ""]
+            },
+            "description": "Get all users' public keys for encryption"
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Messaging System",
+      "description": "Real-time messaging with E2E encryption",
+      "item": [
+        {
+          "name": "Create Private Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Private conversation created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('conversation_type', 'private');",
+                  "    pm.collectionVariables.set('conversation_id', response.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation_type\": \"private\",\n  \"participant_ids\": [{{mary_user_id}}]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/conversations/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "conversations", ""]
+            }
+          }
+        },
+        {
+          "name": "Get All Conversations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Conversations retrieved', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/conversations/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "conversations", ""]
+            }
+          }
+        },
+        {
+          "name": "Send Message in Private Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Message sent successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('message_type', 'text');",
+                  "    pm.expect(response).to.have.property('encrypted_content');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation\": {{conversation_id}},\n  \"message_type\": \"text\",\n  \"content\": \"Hey Mary! I just arrived in London and would love some local tips!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/messages/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "messages", ""]
+            },
+            "description": "🔔 Triggers real-time message notification to Mary"
+          }
+        },
+        {
+          "name": "Get Messages in Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Messages retrieved', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/messages/?conversation={{conversation_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "messages", ""],
+              "query": [
+                {
+                  "key": "conversation",
+                  "value": "{{conversation_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reply to Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation\": {{conversation_id}},\n  \"message_type\": \"text\",\n  \"content\": \"Welcome to London, John! I'd be happy to help. The Tube is the best way to get around - get an Oyster card!\",\n  \"reply_to\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/messages/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "messages", ""]
+            },
+            "description": "Mary replies to John's message"
+          }
+        },
+        {
+          "name": "Create Group Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Group conversation created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('conversation_type', 'group');",
+                  "    pm.collectionVariables.set('group_conversation_id', response.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversation_type\": \"group\",\n  \"name\": \"London Travel Group\",\n  \"description\": \"Kenyan travelers in London sharing tips and experiences\",\n  \"participant_ids\": [{{mary_user_id}}, {{david_user_id}}]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/conversations/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "conversations", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Core Discovery Features",
+      "description": "The main travel discovery and matching features",
+      "item": [
+        {
+          "name": "Find Countrymates Nearby (CORE FEATURE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Countrymates found successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('countrymates');",
+                  "    pm.expect(response.countrymates).to.be.an('array');",
+                  "    pm.expect(response.statistics.total_countrymates).to.be.above(0);",
+                  "    pm.expect(response.location.home_country).to.equal('Kenya');",
+                  "    pm.expect(response.location.current_location).to.include('London');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/countrymates-nearby/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "countrymates-nearby", ""]
+            },
+            "description": "🎯 **CORE FEATURE**: Find people from your home country in your current location\n\n**Algorithm:**\n- Matches: same home_country + same current_city\n- Excludes: requesting user\n- Orders: by last login activity\n- Shows: travel status, expertise, languages\n\n**Returns:**\n- Message with count found\n- Location context\n- Statistics breakdown\n- Array of matching countrymate profiles\n\n🔔 **Triggers discovery activity notification**"
+          }
+        },
+        {
+          "name": "Find Local Experts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Local experts found', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('experts');",
+                  "    response.experts.forEach(expert => {",
+                  "        pm.expect(expert).to.have.property('is_local_expert', true);",
+                  "        pm.expect(expert).to.have.property('is_available_to_help', true);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/local-experts/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "local-experts", ""]
+            },
+            "description": "🧭 **Find Local Experts**: Verified helpers with local knowledge\n\n**Criteria:**\n- is_local_expert = true\n- is_available_to_help = true\n- years_in_current_location >= 1\n- In your current city\n\n**Ordering:**\n- By helper_rating (descending)\n- By help_requests_fulfilled (descending)\n\n**Use Cases:**\n- Transportation guidance\n- Food recommendations\n- Cultural insights\n- Emergency assistance\n- Accommodation help"
+          }
+        },
+        {
+          "name": "Find Travel Buddies",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Travel buddies response received', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('travel_buddies');",
+                  "    pm.expect(response).to.have.property('your_travel_dates');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/travel-buddies/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "travel-buddies", ""]
+            },
+            "description": "👥 **Travel Buddy Matching**: Find travelers with overlapping dates\n\n**Requirements:**\n- User must have travel_status = 'traveling'\n- Preferably with travel_start_date and travel_end_date\n\n**Algorithm:**\n- Same home_country + current_country\n- travel_status = 'traveling'\n- Overlapping travel dates (if available)\n\n**Use Cases:**\n- Split accommodation costs\n- Group sightseeing\n- Shared transportation\n- Safety in numbers"
+          }
+        },
+        {
+          "name": "Smart Matches with Compatibility Scoring",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Smart matches with compatibility scores', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('matches');",
+                  "    response.matches.forEach(match => {",
+                  "        pm.expect(match).to.have.property('compatibility_score');",
+                  "        pm.expect(match).to.have.property('match_reasons');",
+                  "        pm.expect(match.match_reasons).to.be.an('array');",
+                  "        pm.expect(match.compatibility_score).to.be.above(0);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/smart-matches/?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "smart-matches", ""],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Maximum matches to return (max 50)"
+                }
+              ]
+            },
+            "description": "🎯 **Smart Compatibility Algorithm**: AI-powered matching with scoring\n\n**Compatibility Score Breakdown:**\n- **Base (50)**: Same country + location\n- **Travel Status (15-40)**: Complementary statuses\n  - Traveler + Resident: +35\n  - Traveler + Expat: +30\n  - Traveler + Traveler (overlapping): +40\n- **Languages (20 each)**: Common languages\n- **Helper Bonus (25-40)**: Local expert or helper\n- **Rating Bonus (30)**: Helper rating >= 4.0\n- **Activity Bonus (10)**: Active in last 7 days\n\n**Match Reasons Examples:**\n- \"From your home country\"\n- \"Local expert available to help\"\n- \"Fellow traveler with overlapping dates\"\n- \"Speaks English, Swahili\"\n- \"Highly rated helper (4.5/5.0)\""
+          }
+        },
+        {
+          "name": "Emergency Network",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Emergency network available', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('emergency_contacts');",
+                  "    response.emergency_contacts.forEach(contact => {",
+                  "        pm.expect(contact).to.have.property('is_available_to_help', true);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/emergency-network/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "emergency-network", ""]
+            },
+            "description": "🆘 **Emergency Network**: Quick access to trusted countrymates\n\n**Criteria:**\n- Same home_country\n- Same current_city\n- is_available_to_help = true\n- user.is_active = true\n\n**Ordering:**\n- By helper_rating (highest first)\n- By help_requests_fulfilled (most experienced first)\n\n**Returns:** Top 10 potential emergency contacts\n\n**Use Cases:**\n- Medical emergencies\n- Lost documents\n- Safety concerns\n- Urgent local guidance"
+          }
+        },
+        {
+          "name": "Location Statistics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Location statistics provided', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('local_network');",
+                  "    pm.expect(response).to.have.property('global_network_size');",
+                  "    pm.expect(response.local_network).to.have.property('total_countrymates');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/location-stats/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "location-stats", ""]
+            },
+            "description": "📊 **Location Analytics**: Community insights and statistics\n\n**Provides:**\n- Total countrymates in your area\n- Breakdown by travel status:\n  - travelers (visiting temporarily)\n  - residents (permanent)\n  - expats (living abroad long-term)\n- Local experts count\n- Available helpers count\n- Global network size for your country\n- Actionable insights and recommendations"
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Travel Status Management",
+      "description": "Manage travel status and trigger notifications",
+      "item": [
+        {
+          "name": "Get My Travel Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Travel status retrieved', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('travel_status');",
+                  "    pm.expect(response).to.have.property('location');",
+                  "    pm.expect(response).to.have.property('preferences');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/travel-status/my-status/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "travel-status", "my-status", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Travel Status (Triggers Notifications)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Travel status updated successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('message', 'Travel status updated successfully');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"travel_status\": \"traveling\",\n  \"travel_start_date\": \"2025-01-15\",\n  \"travel_end_date\": \"2025-02-15\",\n  \"is_available_to_help\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/travel-status/update-status/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "travel-status", "update-status", ""]
+            },
+            "description": "🔔 **TRIGGERS REAL-TIME NOTIFICATIONS**\n\nWhen you update your travel status, nearby countrymates receive notifications:\n\n**Notification Types:**\n- `countrymate_traveling_nearby`: When someone starts traveling in your area\n- `travel_status_changed`: When someone changes their status\n\n**Status Options:**\n- `traveling`: Visiting temporarily\n- `expat`: Living abroad long-term\n- `resident`: Local resident\n- `returning`: Returning home\n\n**⚠️ IMPORTANT**: Connect to WebSocket first to see notifications!"
+          }
+        },
+        {
+          "name": "Update Helper Preferences",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Preferences updated successfully', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('message', 'Preferences updated successfully');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_available_to_help\": true,\n  \"is_local_expert\": true,\n  \"languages_spoken\": [\"English\", \"Swahili\", \"Arabic\", \"French\"],\n  \"expertise_areas\": [\"transportation\", \"food\", \"accommodation\", \"culture\", \"shopping\", \"nightlife\"],\n  \"years_in_current_location\": 4\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/travel-status/update-preferences/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "travel-status", "update-preferences", ""]
+            },
+            "description": "⚙️ **Update Helper Profile**: Modify availability and expertise\n\n**Available Expertise Areas:**\n- transportation (public transport, taxi, driving)\n- food (restaurants, local cuisine, groceries)\n- accommodation (hotels, rentals, neighborhoods)\n- culture (customs, etiquette, traditions)\n- shopping (markets, stores, bargaining)\n- nightlife (bars, clubs, entertainment)\n- healthcare (hospitals, insurance, pharmacies)\n- education (schools, universities, courses)\n- legal (visas, permits, documentation)\n- sports (gyms, clubs, outdoor activities)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔔 WebSocket & Notifications",
+      "description": "Real-time notification testing and WebSocket connections",
+      "item": [
+        {
+          "name": "WebSocket Connection Guide",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/",
+              "host": ["{{base_url}}"],
+              "path": ["api", ""]
+            },
+            "description": "🔌 **WebSocket Real-time Notifications Testing**\n\n## **Method 1: Browser Console (Recommended)**\n\n1. **Open Browser Developer Tools** (F12)\n2. **Go to Console tab**\n3. **Connect to WebSocket:**\n\n```javascript\n// Replace YOUR_JWT_TOKEN with actual token from login\nconst token = 'YOUR_JWT_TOKEN_HERE';\nconst ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${token}`);\n\nws.onopen = () => {\n    console.log('✅ Connected to Jamii Spot notifications');\n};\n\nws.onmessage = (event) => {\n    const data = JSON.parse(event.data);\n    console.log('📩 Notification received:', data);\n    \n    // Log different notification types\n    switch(data.notification_type) {\n        case 'friend_request_received':\n            console.log(`👋 Friend request from ${data.data.from_user_username}`);\n            break;\n        case 'friend_request_accepted':\n            console.log(`🎉 ${data.data.new_friend_username} accepted your friend request!`);\n            break;\n        case 'countrymate_traveling_nearby':\n            console.log(`🌍 ${data.data.username} from ${data.data.home_country} is traveling nearby`);\n            break;\n        case 'location_search_performed':\n            console.log(`🔍 Discovery search: ${data.message}`);\n            break;\n        default:\n            console.log(`📨 ${data.type}: ${data.message}`);\n    }\n};\n\nws.onerror = (error) => console.error('❌ WebSocket error:', error);\nws.onclose = () => console.log('🔌 WebSocket connection closed');\n```\n\n## **Method 2: Command Line (wscat)**\n\n```bash\n# Install wscat globally\nnpm install -g wscat\n\n# Connect to WebSocket\nwscat -c \"ws://localhost:8000/ws/notifications/?token=YOUR_JWT_TOKEN\"\n```\n\n## **Method 3: Postman WebSocket**\n\n1. Create new **WebSocket Request** in Postman\n2. URL: `ws://localhost:8000/ws/notifications/?token=YOUR_JWT_TOKEN`\n3. Click **Connect**\n4. Monitor messages in real-time\n\n## **Notification Types to Test:**\n\n| Action | Triggers Notification | Recipient |\n|--------|----------------------|----------|\n| Send friend request | `friend_request_received` | Request recipient |\n| Accept friend request | `friend_request_accepted` | Request sender |\n| Update travel status | `countrymate_traveling_nearby` | Nearby countrymates |\n| Perform discovery search | `location_search_performed` | Searching user |\n| Post new story | `friend_new_story` | All friends |\n| Story processing complete | `story_processing_complete` | Story creator |\n\n## **Test Sequence:**\n\n1. **Connect Mary to WebSocket** (using mary_token)\n2. **Connect John to WebSocket** (using john_token)\n3. **Run any API action** (friend request, travel update, etc.)\n4. **Observe real-time notifications** in both connections\n\n**🎯 Pro Tip**: Keep WebSocket connections open while running other API tests to see all real-time interactions!"
+          }
+        }
+      ]
+    },
+    {
+      "name": "❌ Error Handling & Security",
+      "description": "Test authentication, permissions, and error responses",
+      "item": [
+        {
+          "name": "Unauthorized Access Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthorized access blocked', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('detail');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/discover/countrymates-nearby/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "countrymates-nearby", ""]
+            },
+            "description": "🚫 Test unauthorized access - should return 401"
+          }
+        },
+        {
+          "name": "Invalid JWT Token Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Invalid token rejected', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.detail).to.include('token not valid');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_12345"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/countrymates-nearby/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "countrymates-nearby", ""]
+            }
+          }
+        },
+        {
+          "name": "Travel Buddies (Non-Traveler Status)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Non-traveler cannot find travel buddies', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.message).to.include('need to set your travel status to \"traveling\"');",
+                  "    pm.expect(response.travel_buddies).to.be.an('array').that.is.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/travel-buddies/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "travel-buddies", ""]
+            },
+            "description": "⚠️ Business logic test - Mary (expat) cannot find travel buddies"
+          }
+        },
+        {
+          "name": "Send Friend Request to Self (Error)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Cannot send friend request to self', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.non_field_errors[0]).to.include('cannot send a friend request to yourself');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to_user\": {{john_user_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/friend-requests/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "friend-requests", ""]
+            }
+          }
+        },
+        {
+          "name": "Edit Other User's Profile (Permission Test)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Cannot edit other user profile', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Trying to hack Mary's profile!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{mary_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{mary_user_id}}", ""]
+            },
+            "description": "🔒 Test that users can only edit their own profiles"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Performance & Load Testing",
+      "description": "Test API performance, pagination, and response times",
+      "item": [
+        {
+          "name": "Smart Matches Performance Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Response time under 1000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test('Pagination limit respected', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.matches.length).to.be.at.most(5);",
+                  "});",
+                  "",
+                  "pm.test('All matches have compatibility scores', function () {",
+                  "    const response = pm.response.json();",
+                  "    response.matches.forEach(match => {",
+                  "        pm.expect(match.compatibility_score).to.be.a('number');",
+                  "        pm.expect(match.compatibility_score).to.be.above(0);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/smart-matches/?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "smart-matches", ""],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "⚡ Test response time and pagination limits"
+          }
+        },
+        {
+          "name": "Maximum Limit Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Max limit enforced (50)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.matches.length).to.be.at.most(50);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/smart-matches/?limit=100",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "smart-matches", ""],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Request 100 but should get max 50"
+                }
+              ]
+            },
+            "description": "Test that API enforces maximum limit of 50 matches"
+          }
+        },
+        {
+          "name": "Concurrent Discovery Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/countrymates-nearby/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "countrymates-nearby", ""]
+            },
+            "description": "🔄 Run this multiple times quickly to test concurrent request handling"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Advanced Testing Scenarios",
+      "description": "Complex user scenarios and edge cases",
+      "item": [
+        {
+          "name": "Multi-Country User Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"sarah_nigerian\",\n  \"email\": \"sarah@example.com\",\n  \"password\": \"securepass123\",\n  \"first_name\": \"Sarah\",\n  \"last_name\": \"Adebayo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register", ""]
+            },
+            "description": "Create user from different country to test filtering"
+          }
+        },
+        {
+          "name": "Login Sarah (Nigerian)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Nigerian user logged in', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('sarah_token', response.access);",
+                  "    pm.collectionVariables.set('sarah_user_id', 4); // Assuming 4th user",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"sarah_nigerian\",\n  \"password\": \"securepass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Setup Sarah's Profile (Nigerian in London)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sarah_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Nigerian businesswoman visiting London\",\n  \"home_country\": \"Nigeria\",\n  \"home_city\": \"Lagos\",\n  \"current_country\": \"United Kingdom\",\n  \"current_city\": \"London\",\n  \"travel_status\": \"traveling\",\n  \"travel_start_date\": \"2025-01-08\",\n  \"travel_end_date\": \"2025-01-22\",\n  \"is_available_to_help\": true,\n  \"languages_spoken\": [\"English\", \"Yoruba\", \"Igbo\"],\n  \"is_local_expert\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{sarah_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{sarah_user_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Sarah Searches for Countrymates (Should Find None)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('No Kenyan countrymates found for Nigerian user', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.statistics.total_countrymates).to.equal(0);",
+                  "    pm.expect(response.countrymates).to.be.an('array').that.is.empty;",
+                  "    pm.expect(response.location.home_country).to.equal('Nigeria');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sarah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/countrymates-nearby/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "countrymates-nearby", ""]
+            },
+            "description": "🧪 Test country filtering - Nigerian should not find Kenyan countrymates"
+          }
+        },
+        {
+          "name": "Cross-Country Smart Matches (Should Be Empty)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('No cross-country matches', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.matches).to.be.an('array').that.is.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{sarah_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/smart-matches/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "smart-matches", ""]
+            },
+            "description": "🔍 Verify that smart matching respects country boundaries"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎯 Feature Integration Tests",
+      "description": "Test complete user journeys and feature interactions",
+      "item": [
+        {
+          "name": "Complete Traveler Journey - John",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Complete journey data available', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    ",
+                  "    // Should find at least Mary and David",
+                  "    pm.expect(response.statistics.total_countrymates).to.be.at.least(2);",
+                  "    pm.expect(response.statistics.local_experts).to.be.at.least(1); // Mary",
+                  "    pm.expect(response.statistics.travelers).to.be.at.least(1); // David",
+                  "    pm.expect(response.statistics.available_helpers).to.be.at.least(2);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/countrymates-nearby/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "countrymates-nearby", ""]
+            },
+            "description": "🎭 **Complete User Journey Test**\n\nThis simulates John's complete experience:\n1. John (Kenyan traveler) arrives in London\n2. Uses app to find countrymates\n3. Discovers Mary (local expert) and David (travel buddy)\n4. Can connect with both for different needs\n\n**Success Criteria:**\n- Finds other Kenyans in London\n- Identifies Mary as local expert\n- Identifies David as travel buddy\n- Gets actionable statistics and insights"
+          }
+        },
+        {
+          "name": "Helper Discovery - Mary's Perspective",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Local expert can find travelers to help', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.statistics.travelers).to.be.at.least(2); // John + David",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mary_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/countrymates-nearby/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "countrymates-nearby", ""]
+            },
+            "description": "🏠 **Helper's Perspective**: Mary discovers travelers she can help"
+          }
+        },
+        {
+          "name": "Travel Buddy Matching - David's View",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Travel buddy found with overlapping dates', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.travel_buddies).to.be.an('array');",
+                  "    // Should find John (overlapping travel dates)",
+                  "    const john = response.travel_buddies.find(buddy => buddy.user.username === 'john_traveler');",
+                  "    if (john) {",
+                  "        pm.expect(john.travel_status).to.equal('traveling');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{david_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/discover/travel-buddies/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "discover", "travel-buddies", ""]
+            },
+            "description": "👥 **Travel Buddy Perspective**: David finds John for potential collaboration"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📈 Data Validation & Integrity",
+      "description": "Test data consistency and validation rules",
+      "item": [
+        {
+          "name": "Profile Completeness Score Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Completeness score calculated correctly', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('completeness_score');",
+                  "    pm.expect(response.completeness_score).to.be.a('number');",
+                  "    pm.expect(response.completeness_score).to.be.within(0, 100);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{john_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{john_user_id}}", ""]
+            },
+            "description": "Test profile completeness calculation (bio, avatar, home_country, interests)"
+          }
+        },
+        {
+          "name": "Travel Date Validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Travel dates validated correctly', function () {",
+                  "    // This should either succeed with valid dates or fail with proper error",
+                  "    if (pm.response.code === 200) {",
+                  "        const response = pm.response.json();",
+                  "        pm.expect(response.travel_start_date).to.exist;",
+                  "        pm.expect(response.travel_end_date).to.exist;",
+                  "    } else {",
+                  "        pm.expect(pm.response.code).to.equal(400);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"travel_start_date\": \"2025-02-15\",\n  \"travel_end_date\": \"2025-01-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{john_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{john_user_id}}", ""]
+            },
+            "description": "Test invalid date range (end before start)"
+          }
+        },
+        {
+          "name": "Language Array Validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Languages array handled correctly', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.languages_spoken).to.be.an('array');",
+                  "    pm.expect(response.languages_spoken).to.include('English');",
+                  "    pm.expect(response.languages_spoken).to.include('TestLanguage');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{john_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"languages_spoken\": [\"English\", \"Swahili\", \"TestLanguage\", \"AnotherLanguage\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profiles/{{john_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profiles", "{{john_user_id}}", ""]
+            },
+            "description": "Test JSON array field handling for languages"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log('🚀 Jamii Spot API Request:', pm.request.url.toString());",
+          "",
+          "// Add timestamp to requests",
+          "pm.request.headers.add({",
+          "    key: 'X-Request-Time',",
+          "    value: new Date().toISOString()",
+          "});"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script - runs after each request",
+          "",
+          "pm.test('Response time acceptable (under 2 seconds)', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "pm.test('Content-Type is JSON for API endpoints', function () {",
+          "    if (pm.request.url.toString().includes('/api/')) {",
+          "        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+          "    }",
+          "});",
+          "",
+          "pm.test('No server errors (5xx)', function () {",
+          "    pm.expect(pm.response.code).to.be.below(500);",
+          "});",
+          "",
+          "// Log response summary",
+          "console.log(`✅ ${pm.response.status} (${pm.response.responseTime}ms): ${pm.request.url.toString()}`);",
+          "",
+          "// Log errors for debugging",
+          "if (pm.response.code >= 400) {",
+          "    console.log('❌ Error Response:', pm.response.json());",
+          "}"
+        ]
+      }
+    }
+  ]
+}
